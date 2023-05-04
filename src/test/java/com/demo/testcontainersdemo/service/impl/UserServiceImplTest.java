@@ -3,6 +3,8 @@ package com.demo.testcontainersdemo.service.impl;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.junit.jupiter.api.Assertions.assertNotNull;
 
+import java.util.List;
+
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
@@ -22,6 +24,8 @@ class UserServiceImplTest {
     @Container
     private static PostgreSQLContainer database =
             (PostgreSQLContainer) new PostgreSQLContainer("postgres:12").withReuse(true);
+    @Autowired
+    UserService userService = new UserServiceImpl();
 
     @DynamicPropertySource
     static void setDatasourceProperties(DynamicPropertyRegistry propertyRegistry) {
@@ -30,9 +34,6 @@ class UserServiceImplTest {
         propertyRegistry.add("spring.datasource.username", database::getUsername);
         propertyRegistry.add("spring.jpa.hibernate.ddl-auto", () -> "update");
     }
-
-    @Autowired
-    UserService userService = new UserServiceImpl();
 
     @Test
     void createUser() {
@@ -49,6 +50,10 @@ class UserServiceImplTest {
 
     @Test
     void retrieveUser() {
+        List<User> users = List.of(new User("test-1", 2), new User("test-2", 9));
+        List<User> userList = userService.createUserList(users);
+        assertEquals(users, userList);
+
         int userCount = userService.retrieveUser().size();
         assertEquals(2, userCount);
     }

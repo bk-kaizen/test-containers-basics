@@ -14,6 +14,14 @@ public class User {
         return id;
     }
 
+    public User() {
+    }
+
+    public User(String name, int age) {
+        this.name = name;
+        this.age = age;
+    }
+
     public void setId(long id) {
         this.id = id;
     }
